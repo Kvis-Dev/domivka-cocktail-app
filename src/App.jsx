@@ -9,7 +9,6 @@ import aperol from './assets/aperol.png'
 import song from './assets/ifyoulikepinacolada.png'
 import redbbl from './assets/redbbl.png'
 import tsunr from './assets/tqsunrise.png'
-import reactImg from './assets/react.svg'
 import gintk from './assets/gintonik.png'
 import groni from './assets/groni.png'
 import cmax from './assets/cmax.png'
@@ -110,7 +109,9 @@ function App() {
   return (
     <div className="app">
       <header className="header">
-        <h1>🍹</h1>
+        <h1 onClick={() => {
+          window.location.reload()
+        }}>🍹</h1>
           <span className="count">Items: {itemsCount}</span>
           <span className="total">Total: {total}</span>
 
