@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react'
+import {useEffect, useState} from 'react'
 import './App.css'
-import { saveOrder, getAllOrders, clearOrders } from './db'
+import {saveOrder, getAllOrders, clearOrders} from './db'
 import mijitoImg from './assets/mijito.png'
 import mijitoNaImg from './assets/mojito-na.png'
 import whCola from './assets/wh-cola.png'
@@ -16,18 +16,18 @@ import wtr from './assets/wtr.png'
 
 // Placeholder list — to be replaced with the real cocktails & prices provided later.
 const COCKTAILS = [
-  { id: 1, name: 'Mojito non-alk', price: 150, color: '#A8E6CF', image: mijitoNaImg },
-  { id: 2, name: 'Whiskey Cola', price: 200, color: '#D4A373', image: whCola },
-  { id: 3, name: 'Citrus Sour', price: 200, color: '#FFE066', image: citrussaur },
-  { id: 4, name: 'Aperol', price: 200, color: '#FFB085', image: aperol },
-  { id: 5, name: 'Gin Tonic', price: 200, color: '#B5EAD7', image: gintk },
-  { id: 6, name: 'Mojito', price: 250, color: '#7BD389', image: mijitoImg },
-  { id: 7, name: 'Red Bubble', price: 250, color: '#FF8FA3', image: redbbl },
-  { id: 8, name: 'Tequila Sunrise', price: 250, color: '#FFB347', image: tsunr },
-  { id: 9, name: 'Piña Colada', price: 250, color: '#FFF3B0', image: song },
-  { id: 10, name: 'Negroni', price: 300, color: '#F8B195', image: groni },
-  { id: 11, name: 'Crazy Maks', price: 350, color: '#C77DFF', image: cmax },
-  { id: 12, name: 'Water', price: 50, color: '#a6bbff', image: wtr },
+  {id: 1, name: 'Mojito non-alk', price: 150, color: '#A8E6CF', image: mijitoNaImg},
+  {id: 2, name: 'Whiskey Cola', price: 200, color: '#D4A373', image: whCola},
+  {id: 3, name: 'Citrus Sour', price: 200, color: '#FFE066', image: citrussaur},
+  {id: 4, name: 'Aperol', price: 200, color: '#FFB085', image: aperol},
+  {id: 5, name: 'Gin Tonic', price: 200, color: '#B5EAD7', image: gintk},
+  {id: 6, name: 'Mojito', price: 250, color: '#7BD389', image: mijitoImg},
+  {id: 7, name: 'Red Bubble', price: 250, color: '#FF8FA3', image: redbbl},
+  {id: 8, name: 'Tequila Sunrise', price: 250, color: '#FFB347', image: tsunr},
+  {id: 9, name: 'Piña Colada', price: 250, color: '#FFF3B0', image: song},
+  {id: 10, name: 'Negroni', price: 300, color: '#F8B195', image: groni},
+  {id: 11, name: 'Crazy Maks', price: 350, color: '#C77DFF', image: cmax},
+  {id: 12, name: 'Water', price: 50, color: '#a6bbff', image: wtr},
 ]
 
 function App() {
@@ -35,19 +35,20 @@ function App() {
   const [counts, setCounts] = useState({})
   const [historyOpen, setHistoryOpen] = useState(false)
   const [history, setHistory] = useState([])
+  const [updateClick, setUpdateClick] = useState(0)
 
   const addCocktail = (c) => {
-    setCounts((prev) => ({ ...prev, [c.id]: (prev[c.id] || 0) + 1 }))
+    setCounts((prev) => ({...prev, [c.id]: (prev[c.id] || 0) + 1}))
   }
 
   const removeCocktail = (c) => {
     setCounts((prev) => {
       const current = prev[c.id] || 0
       if (current <= 1) {
-        const { [c.id]: _, ...rest } = prev
+        const {[c.id]: _, ...rest} = prev
         return rest
       }
-      return { ...prev, [c.id]: current - 1 }
+      return {...prev, [c.id]: current - 1}
     })
   }
 
@@ -61,7 +62,7 @@ function App() {
     if (itemsCount === 0) return
     const items = COCKTAILS
       .filter((c) => counts[c.id])
-      .map((c) => ({ id: c.id, name: c.name, price: c.price, qty: counts[c.id] }))
+      .map((c) => ({id: c.id, name: c.name, price: c.price, qty: counts[c.id]}))
     try {
       await saveOrder({
         createdAt: Date.now(),
@@ -110,10 +111,15 @@ function App() {
     <div className="app">
       <header className="header">
         <h1 onClick={() => {
-          window.location.reload()
+          if (updateClick === 7) {
+            if (prompt('reload?')) {
+              window.location.reload()
+            }
+          }
+          setUpdateClick(updateClick + 1)
         }}>🍹</h1>
-          <span className="count">Items: {itemsCount}</span>
-          <span className="total">Total: {total}</span>
+        <span className="count">Items: {itemsCount}</span>
+        <span className="total">Total: {total}</span>
 
         <div className="order-info">
           <button
@@ -153,14 +159,13 @@ function App() {
                 backgroundImage: `url(${c.image})`,
                 backgroundSize: '80%',
                 backgroundPosition: 'center center',
-                backgroundRepeat:'no-repeat'
+                backgroundRepeat: 'no-repeat'
               }}
               onClick={() => addCocktail(c)}
               role="button"
             >
-              <div className="card-top" style={{
-
-              }}>
+              <div className="card-top"
+                   style={{}}>
                 <span className="card-name">{c.name}</span>
                 {qty > 0 && <span className="card-qty">×{qty}</span>}
               </div>
@@ -184,11 +189,16 @@ function App() {
       </main>
 
       {historyOpen && (
-        <div className="modal-backdrop" onClick={closeHistory}>
-          <div className="modal" onClick={(e) => e.stopPropagation()}>
+        <div className="modal-backdrop"
+             onClick={closeHistory}>
+          <div className="modal"
+               onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
               <h2>🕘 Order History</h2>
-              <button className="modal-close" onClick={closeHistory} aria-label="Close">×</button>
+              <button className="modal-close"
+                      onClick={closeHistory}
+                      aria-label="Close">×
+              </button>
             </div>
             <div className="modal-body">
               {history.length === 0 ? (
@@ -196,7 +206,8 @@ function App() {
               ) : (
                 <ul className="history-list">
                   {history.map((o) => (
-                    <li key={o.id} className="history-item">
+                    <li key={o.id}
+                        className="history-item">
                       <div className="history-row">
                         <span className="history-date">
                           {new Date(o.createdAt).toLocaleString()}
@@ -205,7 +216,8 @@ function App() {
                       </div>
                       <div className="history-items">
                         {o.items.map((it) => (
-                          <span key={it.id} className="history-chip">
+                          <span key={it.id}
+                                className="history-chip">
                             {it.name} ×{it.qty}
                           </span>
                         ))}
