@@ -2,7 +2,7 @@
   "name": "Cocktail Bar",
   "short_name": "Cocktails",
   "description": "Cocktail ordering app for tablet use",
-  "start_url": "/",
+  "start_url": "/domivka-cocktail-app/",
   "scope": "/",
   "display": "standalone",
   "orientation": "any",
