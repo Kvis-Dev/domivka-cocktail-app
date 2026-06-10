@@ -112,7 +112,7 @@ function App() {
       <header className="header">
         <h1 onClick={() => {
           if (updateClick === 7) {
-            if (prompt('reload?')) {
+            if (confirm('reload?')) {
               window.location.reload()
             }
           }
