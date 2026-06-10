@@ -115,8 +115,10 @@ function App() {
             if (confirm('reload?')) {
               window.location.reload()
             }
+            setUpdateClick(0)
+          } else {
+            setUpdateClick(updateClick + 1)
           }
-          setUpdateClick(updateClick + 1)
         }}>🍹</h1>
         <span className="count">Items: {itemsCount}</span>
         <span className="total">Total: {total}</span>
