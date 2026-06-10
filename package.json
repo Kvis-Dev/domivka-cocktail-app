@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "npm run copy-manifest && vite build",
+    "copy-manifest": "cp public/manifest.webmanifest dist/",
     "lint": "eslint .",
     "preview": "vite preview"
   },
