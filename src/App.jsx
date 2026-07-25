@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react'
+import {useEffect, useMemo, useState} from 'react'
 import './App.css'
 import {saveOrder, getAllOrders, clearOrders} from './db'
 import mijitoImg from './assets/mijito.png'
@@ -36,6 +36,7 @@ function App() {
   const [historyOpen, setHistoryOpen] = useState(false)
   const [history, setHistory] = useState([])
   const [updateClick, setUpdateClick] = useState(0)
+  const [statsView, setStatsView] = useState(false)
 
   const addCocktail = (c) => {
     setCounts((prev) => ({...prev, [c.id]: (prev[c.id] || 0) + 1}))
@@ -91,13 +92,53 @@ function App() {
     setHistoryOpen(true)
   }
 
-  const closeHistory = () => setHistoryOpen(false)
+  const closeHistory = () => {
+    setHistoryOpen(false)
+    setStatsView(false)
+  }
 
   const clearHistory = async () => {
     if (!confirm('Clear all order history?')) return
     await clearOrders()
     setHistory([])
   }
+
+  // Aggregate every cocktail served, grouped by day, for the stats view.
+  const dayStats = useMemo(() => {
+    const days = new Map()
+    for (const o of history) {
+      const date = new Date(o.createdAt)
+      const dayKey = date.toLocaleDateString('en-CA') // YYYY-MM-DD, stable sort key
+      if (!days.has(dayKey)) {
+        days.set(dayKey, {
+          dayKey,
+          dateLabel: date.toLocaleDateString(undefined, {
+            weekday: 'short',
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+          }),
+          totalQty: 0,
+          totalRevenue: 0,
+          orderCount: 0,
+          items: new Map(),
+        })
+      }
+      const day = days.get(dayKey)
+      day.orderCount += 1
+      day.totalRevenue += o.total
+      for (const it of o.items) {
+        day.totalQty += it.qty
+        day.items.set(it.name, (day.items.get(it.name) || 0) + it.qty)
+      }
+    }
+    return Array.from(days.values())
+      .sort((a, b) => b.dayKey.localeCompare(a.dayKey))
+      .map((day) => ({
+        ...day,
+        itemsSorted: Array.from(day.items.entries()).sort((a, b) => b[1] - a[1]),
+      }))
+  }, [history])
 
   useEffect(() => {
     const onKey = (e) => {
@@ -196,14 +237,50 @@ function App() {
           <div className="modal"
                onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              <h2>🕘 Order History</h2>
-              <button className="modal-close"
-                      onClick={closeHistory}
-                      aria-label="Close">×
-              </button>
+              <h2>{statsView ? '📊 Cocktails by Day' : '🕘 Order History'}</h2>
+              <div className="modal-header-actions">
+                <button
+                  className="icon-btn small"
+                  onClick={() => setStatsView((v) => !v)}
+                  aria-pressed={statsView}
+                  aria-label={statsView ? 'Back to order list' : 'Stats'}
+                  title={statsView ? 'Back to order list' : 'Stats'}
+                >
+                  {statsView ? '🕘' : '📊'}
+                </button>
+                <button className="modal-close"
+                        onClick={closeHistory}
+                        aria-label="Close">×
+                </button>
+              </div>
             </div>
             <div className="modal-body">
-              {history.length === 0 ? (
+              {statsView ? (
+                dayStats.length === 0 ? (
+                  <p className="empty">No orders yet.</p>
+                ) : (
+                  <div className="stats-days">
+                    {dayStats.map((day) => (
+                      <div key={day.dayKey} className="stats-day">
+                        <div className="stats-day-header">
+                          <span className="stats-day-date">{day.dateLabel}</span>
+                          <span className="stats-day-summary">
+                            {day.totalQty} cocktail{day.totalQty === 1 ? '' : 's'} · ₴
+                            {day.totalRevenue.toFixed(2)}
+                          </span>
+                        </div>
+                        <div className="history-items">
+                          {day.itemsSorted.map(([name, qty]) => (
+                            <span key={name} className="history-chip">
+                              {name} ×{qty}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )
+              ) : history.length === 0 ? (
                 <p className="empty">No orders yet.</p>
               ) : (
                 <ul className="history-list">
