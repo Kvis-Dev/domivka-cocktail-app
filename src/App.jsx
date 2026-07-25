@@ -21,12 +21,12 @@ const COCKTAILS = [
   {id: 3, name: 'Citrus Sour', price: 200, color: '#FFE066', image: citrussaur},
   {id: 4, name: 'Aperol', price: 200, color: '#FFB085', image: aperol},
   {id: 5, name: 'Gin Tonic', price: 200, color: '#B5EAD7', image: gintk},
-  {id: 6, name: 'Mojito', price: 250, color: '#7BD389', image: mijitoImg},
+  {id: 6, name: 'Mojito', price: 200, color: '#7BD389', image: mijitoImg},
   {id: 7, name: 'Red Bubble', price: 250, color: '#FF8FA3', image: redbbl},
   {id: 8, name: 'Tequila Sunrise', price: 250, color: '#FFB347', image: tsunr},
   {id: 9, name: 'Piña Colada', price: 250, color: '#FFF3B0', image: song},
   {id: 10, name: 'Negroni', price: 300, color: '#F8B195', image: groni},
-  {id: 11, name: 'Crazy Maks', price: 350, color: '#C77DFF', image: cmax},
+  {id: 11, name: 'Crazy Maks', price: 300, color: '#C77DFF', image: cmax},
   {id: 12, name: 'Water', price: 50, color: '#a6bbff', image: wtr},
 ]
 
